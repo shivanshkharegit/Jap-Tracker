@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ॐ Devotional Jap Tracker ॐ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #FFD700, #FFA500), url('temple.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .ram-mandir {
+            background-image: url('images/ayodhya.jpg');
+        }
+        .kashi {
+            background-image: url('kashi.jpg');
+        }
+        .lotus {
+            background-image: url('https://via.placeholder.com/100x100?text=Lotus');
+            background-size: cover;
+        }
+        .mantra {
+            font-family: 'Times New Roman', serif;
+            color: #8B4513;
+            animation: fadeInOut 5s infinite;
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .glow {
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.8);
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4" id="body">
+    <!-- Login Section -->
+    <div id="loginSection" class="bg-white bg-opacity-70 rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <h1 class="text-3xl font-bold text-orange-600 mb-4 mantra">ॐ Jap Tracker ॐ</h1>
+        <p class="text-gray-700 mb-6">Login to track your devotional journey.</p>
+        <input type="text" id="username" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Enter Username">
+        <button id="loginButton" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded">Login</button>
+    </div>
+
+    <!-- Main App (hidden until login) -->
+    <div id="appSection" class="hidden bg-white bg-opacity-70 rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <h1 class="text-3xl font-bold text-orange-600 mb-4 mantra">ॐ Jap Tracker ॐ</h1>
+        <p id="mantraText" class="text-gray-700 mb-6 mantra">ॐ नमः पार्वती पतये हर हर महादेव</p> <!-- Dynamic Mantra -->
+        
+        <!-- Background Selection with Indicator -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Select Background:</label>
+            <select id="background" class="w-full p-2 border border-gray-300 rounded">
+                <option value="temple">Temple</option>
+                <option value="ram-mandir">Ram Mandir</option>
+                <option value="kashi">Shri Kashi Vishwanath Mandir</option>
+            </select>
+            <p class="text-sm text-orange-600 mt-2" id="backgroundIndicator">Current Background: Temple</p>
+        </div>
+        
+        <!-- Jap Type Selection -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Select Jap Type:</label>
+            <select id="japType" class="w-full p-2 border border-gray-300 rounded">
+                <option value="om">ॐ (Om)</option>
+                <option value="om-namah-shivay">ॐ नमः शिवाय (Om Namah Shivay)</option>
+                <option value="radhe-shyam">राधे श्याम (Radhe Shyam)</option>
+                <option value="radha-radha">राधा राधा (Radha Radha)</option>
+                <option value="ram-ram">राम राम (Ram Ram)</option>
+                <option value="sita-ram">सीता राम (Sita Ram)</option>
+            </select>
+        </div>
+        
+        <!-- Mode Selection -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Select Mode:</label>
+            <select id="mode" class="w-full p-2 border border-gray-300 rounded">
+                <option value="unlimited">Unlimited Japs</option>
+                <option value="limited">Set Limit</option>
+            </select>
+        </div>
+        
+        <!-- Limit Input (hidden by default) -->
+        <div id="limitSection" class="mb-6 hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Set Jap Limit:</label>
+            <input type="number" id="limit" class="w-full p-2 border border-gray-300 rounded" placeholder="e.g., 108" min="1">
+            <!-- Progress Bar -->
+            <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="progressBar" class="bg-orange-500 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p class="text-sm text-gray-600 mt-1" id="progressText">0 / 0</p>
+            </div>
+        </div>
+        
+        <!-- Counter Display -->
+        <div class="text-6xl font-bold text-orange-600 mb-6" id="counter">0</div>
+        
+        <!-- Streak Display -->
+        <p class="text-lg text-orange-700 mb-4" id="streak">Streak: 0 days</p>
+        
+        <!-- Big Button (Centered) -->
+        <div class="flex justify-center mb-4">
+            <button id="japButton" class="w-48 h-48 bg-orange-500 hover:bg-orange-600 hover:glow text-white rounded-full text-2xl font-bold shadow-lg transition duration-300 lotus flex items-center justify-center">
+                Click to Jap
+            </button>
+        </div>
+        
+        <!-- Buttons -->
+        <div class="flex justify-center space-x-4">
+            <button id="resetButton" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded">Reset</button>
+            <button id="historyButton" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">View History</button>
+            <button id="logoutButton" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded">Logout</button>
+        </div>
+        
+        <!-- History Section (hidden by default) -->
+        <div id="historySection" class="mt-6 hidden">
+            <h2 class="text-xl font-bold text-orange-600 mb-4">Your History</h2>
+            <div id="historyList" class="text-left text-sm text-gray-700 max-h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="clickSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"></audio>
+    <audio id="alarmSound" src="https://www.soundjay.com/misc/sounds/alarm-clock-01.wav"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginSection = document.getElementById('loginSection');
+            const appSection = document.getElementById('appSection');
+            const usernameInput = document.getElementById('username');
+            const loginButton = document.getElementById('loginButton');
+            const logoutButton = document.getElementById('logoutButton');
+            const backgroundSelect = document.getElementById('background');
+            const japTypeSelect = document.getElementById('japType');
+            const mantraText = document.getElementById('mantraText');
+            const counter = document.getElementById('counter');
+            const japButton = document.getElementById('japButton');
+            const resetButton = document.getElementById('resetButton');
+            const historyButton = document.getElementById('historyButton');
+            const historySection = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+            const modeSelect = document.getElementById('mode');
+            const limitSection = document.getElementById('limitSection');
+            const limitInput = document.getElementById('limit');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const streakDisplay = document.getElementById('streak');
+            const body = document.getElementById('body');
+            const clickSound = document.getElementById('clickSound');
+            const alarmSound = document.getElementById('alarmSound');
+
+            let currentUser = null;
+            let count = 0;
+            let limit = null;
+            let streak = 0;
+            let lastJapDate = null;
+            let history = [];
+
+            // Devotional Messages
+            const messages = {
+                'om': 'बधाई हो! आपने ॐ का जाप पूरा किया। शांति और आनंद मिले।',
+                'om-namah-shivay': 'बधाई हो! आपने ॐ नमः शिवाय का जाप पूरा किया। भगवान शिव आपको आशीर्वाद दें।',
+                'radhe-shyam': 'बधाई हो! आपने राधे श्याम का जाप पूरा किया। राधा कृष्ण आपको आशीर्वाद दें।',
+                'radha-radha': 'बधाई हो! आपने राधा राधा का जाप पूरा किया। राधा कृष्ण आपको आशीर्वाद दें।',
+                'ram-ram': 'बधाई हो! आपने राम राम का जाप पूरा किया। श्री राम आपको आशीर्वाद दें।',
+                'sita-ram': 'बधाई हो! आपने सीता राम का जाप पूरा किया। श्री राम और सीता जी आपको आशीर्वाद दें।'
+            };
+
+            // Dynamic Mantras
+            const mantras = {
+                'om': '॥ ॐ नमः पार्वती पतये हर हर महादेव ॥',
+                'om-namah-shivay': '॥ ॐ नमः शिवाय हर हर महादेव ॥',
+                'radhe-shyam': '॥ राधे राधे कृष्ण कृष्ण हरि हरि ॥',
+                'radha-radha': '॥ राधा राधा राधा राधा हरि हरि ॥',
+                'ram-ram': '॥ ॐ श्री राम राम रामेति रमे रामे मनोरमे सहस्रनाम तत्तुल्यं राम नाम वरानने ॥',
+                'sita-ram': '॥ सीता राम सीता राम जय जय सीता राम ॥'
+            };
+
+            // Update Mantra Text
+            function updateMantra() {
+                const selectedJap = japTypeSelect.value;
+                mantraText.textContent = mantras[selectedJap] || 'ॐ नमः पार्वती पतये हर हर महादेव';
+            }
+
+            // Login
+            loginButton.addEventListener('click', function() {
+                const username = usernameInput.value.trim();
+                if (username) {
+                    currentUser = username;
+                    loginSection.classList.add('hidden');
+                    appSection.classList.remove('hidden');
+                    loadData();
+                    updateMantra(); // Initial mantra update
+                } else {
+                    alert('Please enter a username.');
+                }
+            });
+
+            // Logout
+            logoutButton.addEventListener('click', function() {
+                saveData();
+                currentUser = null;
+                appSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+                usernameInput.value = '';
+            });
+
+            // Background Change
+            backgroundSelect.addEventListener('change', function() {
+                body.className = `min-h-screen flex flex-col items-center justify-center p-4 ${backgroundSelect.value}`;
+                const selected = backgroundSelect.options[backgroundSelect.selectedIndex].text;
+                document.getElementById('backgroundIndicator').textContent = `Current Background: ${selected}`;
+            });
+
+            // Jap Type Change
+            japTypeSelect.addEventListener('change', function() {
+                updateMantra();
+            });
+
+            // Load Data
+            function loadData() {
+                const data = JSON.parse(localStorage.getItem(`japData_${currentUser}`)) || {};
+                count = data.count || 0;
+                limit = data.limit || null;
+                streak = data.streak || 0;
+                lastJapDate = data.lastJapDate;
+                history = data.history || [];
+                counter.textContent = count;
+                streakDisplay.textContent = `Streak: ${streak} days`;
+                if (limit) {
+                    limitInput.value = limit;
+                    updateProgress();
+                }
+                updateStreak();
+            }
+
+            // Save Data
+            function saveData() {
+                const data = { count, limit, streak, lastJapDate, history };
+                localStorage.setItem(`japData_${currentUser}`, JSON.stringify(data));
+            }
+
+            // Update Progress
+            function updateProgress() {
+                if (limit) {
+                    const percentage = Math.min((count / limit) * 100, 100);
+                    progressBar.style.width = `${percentage}%`;
+                    progressText.textContent = `${count} / ${limit}`;
+                }
+            }
+
+            // Update Streak
+            function updateStreak() {
+                const today = new Date().toDateString();
+                if (lastJapDate === today) {
+                    // Already japped today
+                } else if (lastJapDate === new Date(Date.now() - 86400000).toDateString()) {
+                    streak++;
+                } else {
+                    streak = 1;
+                }
+                lastJapDate = today;
+                streakDisplay.textContent = `Streak: ${streak} days`;
+            }
+
+            // Toggle Limit Section
+            modeSelect.addEventListener('change', function() {
+                if (modeSelect.value === 'limited') {
+                    limitSection.classList.remove('hidden');
+                } else {
+                    limitSection.classList.add('hidden');
+                    limit = null;
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '0 / 0';
+                }
+            });
+
+            // Jap Button Click
+            japButton.addEventListener('click', function() {
+                if (modeSelect.value === 'limited' && limit && count >= limit) {
+                    const japType = japTypeSelect.value;
+                    alert(messages[japType] || 'Jap completed! May the divine bless you.');
+                    alarmSound.play();
+                    // Add to history
+                    const now = new Date();
+                    history.push({
+                        date: now.toDateString(),
+                        time: now.toLocaleTimeString(),
+                        japType: japTypeSelect.options[japTypeSelect.selectedIndex].text,
+                        count: count
+                    });
+                    saveData();
+                    return;
+                }
+                count++;
+                counter.textContent = count;
+                updateProgress();
+                updateStreak();
+                clickSound.play();
+            });
+
+            // Reset Button
+            resetButton.addEventListener('click', function() {
+                // Add to history before reset
+                if (count > 0) {
+                    const now = new Date();
+                    history.push({
+                        date: now.toDateString(),
+                        time: now.toLocaleTimeString(),
+                        japType: japTypeSelect.options[japTypeSelect.selectedIndex].text,
+                        count: count
+                    });
+                }
+                count = 0;
+                counter.textContent = count;
+                limit = limitInput.value ? parseInt(limitInput.value) : null;
+                updateProgress();
+                saveData();
+            });
+
+            // Limit Input Change
+            limitInput.addEventListener('input', function() {
+                limit = parseInt(limitInput.value) || null;
+                updateProgress();
+            });
+
+            // View History
+            historyButton.addEventListener('click', function() {
+                historySection.classList.toggle('hidden');
+                historyList.innerHTML = '';
+                history.forEach(function(entry) {
+                    const li = document.createElement('li');
+                    li.textContent = `${entry.date} ${entry.time} - ${entry.japType}: ${entry.count} japs`;
+                    historyList.appendChild(li);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
