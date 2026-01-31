@@ -16,8 +16,16 @@
             background-image: url('images/ayodhya.jpg');
         }
         .kashi {
-            background-image: url('kashi.jpg');
+            background-image: url('images/pic2.jpg');
         }
+
+            .bg3 {
+            background-image: url('images/pic3.jpg');
+            }
+
+           
+
+        
         .lotus {
             background-image: url('https://via.placeholder.com/100x100?text=Lotus');
             background-size: cover;
@@ -40,7 +48,7 @@
 <body class="min-h-screen flex flex-col items-center justify-center p-4" id="body">
     <!-- Login Section -->
     <div id="loginSection" class="bg-white bg-opacity-70 rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-        <h1 class="text-3xl font-bold text-orange-600 mb-4 mantra">ॐ Jap Tracker ॐ</h1>
+        <h1 class="text-3xl font-bold text-orange-600 mb-4 mantra">ॐ Devotional Jap Tracker ॐ</h1>
         <p class="text-gray-700 mb-6">Login to track your devotional journey.</p>
         <input type="text" id="username" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Enter Username">
         <button id="loginButton" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded">Login</button>
@@ -56,8 +64,12 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Select Background:</label>
             <select id="background" class="w-full p-2 border border-gray-300 rounded">
                 <option value="temple">Temple</option>
-                <option value="ram-mandir">Ram Mandir</option>
-                <option value="kashi">Shri Kashi Vishwanath Mandir</option>
+                <option value="ram-mandir">Background 01</option>
+                <option value="kashi">Background 02</option>
+                <option value="bg3">Background 03</option>
+             <!--   <option value="bg4">Background 04</option>
+                <option value="bg5">Background 05</option>  -->
+
             </select>
             <p class="text-sm text-orange-600 mt-2" id="backgroundIndicator">Current Background: Temple</p>
         </div>
@@ -73,6 +85,11 @@
                 <option value="ram-ram">राम राम (Ram Ram)</option>
                 <option value="sita-ram">सीता राम (Sita Ram)</option>
             </select>
+        </div>
+        
+        <!-- Background Music Toggle -->
+        <div class="mb-6">
+            <button id="musicToggle" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">Background Music: On</button>
         </div>
         
         <!-- Mode Selection -->
@@ -125,8 +142,10 @@
     </div>
 
     <!-- Audio Elements -->
-    <audio id="clickSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"></audio>
-    <audio id="alarmSound" src="https://www.soundjay.com/misc/sounds/alarm-clock-01.wav"></audio>
+    <!--<audio id="clickSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"></audio>
+    <audio id="alarmSound" src="https://www.soundjay.com/misc/sounds/alarm-clock-01.wav"></audio> -->
+
+    <audio id="backgroundMusic" src="images\music.m4a" loop></audio> <!-- Placeholder devotional music, replace with real URL -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -138,6 +157,7 @@
             const backgroundSelect = document.getElementById('background');
             const japTypeSelect = document.getElementById('japType');
             const mantraText = document.getElementById('mantraText');
+            const musicToggle = document.getElementById('musicToggle');
             const counter = document.getElementById('counter');
             const japButton = document.getElementById('japButton');
             const resetButton = document.getElementById('resetButton');
@@ -153,6 +173,7 @@
             const body = document.getElementById('body');
             const clickSound = document.getElementById('clickSound');
             const alarmSound = document.getElementById('alarmSound');
+            const backgroundMusic = document.getElementById('backgroundMusic');
 
             let currentUser = null;
             let count = 0;
@@ -160,6 +181,7 @@
             let streak = 0;
             let lastJapDate = null;
             let history = [];
+            let musicOn = true; // Default on
 
             // Devotional Messages
             const messages = {
@@ -167,8 +189,8 @@
                 'om-namah-shivay': 'बधाई हो! आपने ॐ नमः शिवाय का जाप पूरा किया। भगवान शिव आपको आशीर्वाद दें।',
                 'radhe-shyam': 'बधाई हो! आपने राधे श्याम का जाप पूरा किया। राधा कृष्ण आपको आशीर्वाद दें।',
                 'radha-radha': 'बधाई हो! आपने राधा राधा का जाप पूरा किया। राधा कृष्ण आपको आशीर्वाद दें।',
-                'ram-ram': 'बधाई हो! आपने राम राम का जाप पूरा किया। श्री राम आपको आशीर्वाद दें।',
-                'sita-ram': 'बधाई हो! आपने सीता राम का जाप पूरा किया। श्री राम और सीता जी आपको आशीर्वाद दें।'
+                'ram-ram': 'बधाई हो! आपने राम राम का जाप पूरा किया। भगवान राम आपको आशीर्वाद दें।',
+                'sita-ram': 'बधाई हो! आपने सीता राम का जाप पूरा किया। भगवान राम और माता सीता आपको आशीर्वाद दें।'
             };
 
             // Dynamic Mantras
@@ -187,6 +209,21 @@
                 mantraText.textContent = mantras[selectedJap] || 'ॐ नमः पार्वती पतये हर हर महादेव';
             }
 
+            // Toggle Music
+            function toggleMusic() {
+                musicOn = !musicOn;
+                if (musicOn) {
+                    backgroundMusic.play();
+                    musicToggle.textContent = 'Background Music: On';
+                    musicToggle.className = 'px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded';
+                } else {
+                    backgroundMusic.pause();
+                    musicToggle.textContent = 'Background Music: Off';
+                    musicToggle.className = 'px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded';
+                }
+                saveData();
+            }
+
             // Login
             loginButton.addEventListener('click', function() {
                 const username = usernameInput.value.trim();
@@ -195,7 +232,8 @@
                     loginSection.classList.add('hidden');
                     appSection.classList.remove('hidden');
                     loadData();
-                    updateMantra(); // Initial mantra update
+                    updateMantra();
+                    if (musicOn) backgroundMusic.play();
                 } else {
                     alert('Please enter a username.');
                 }
@@ -204,6 +242,7 @@
             // Logout
             logoutButton.addEventListener('click', function() {
                 saveData();
+                backgroundMusic.pause();
                 currentUser = null;
                 appSection.classList.add('hidden');
                 loginSection.classList.remove('hidden');
@@ -222,6 +261,11 @@
                 updateMantra();
             });
 
+            // Music Toggle
+            musicToggle.addEventListener('click', function() {
+                toggleMusic();
+            });
+
             // Load Data
             function loadData() {
                 const data = JSON.parse(localStorage.getItem(`japData_${currentUser}`)) || {};
@@ -230,6 +274,7 @@
                 streak = data.streak || 0;
                 lastJapDate = data.lastJapDate;
                 history = data.history || [];
+                musicOn = data.musicOn !== undefined ? data.musicOn : true;
                 counter.textContent = count;
                 streakDisplay.textContent = `Streak: ${streak} days`;
                 if (limit) {
@@ -237,11 +282,19 @@
                     updateProgress();
                 }
                 updateStreak();
+                // Update music toggle
+                if (musicOn) {
+                    musicToggle.textContent = 'Background Music: On';
+                    musicToggle.className = 'px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded';
+                } else {
+                    musicToggle.textContent = 'Background Music: Off';
+                    musicToggle.className = 'px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded';
+                }
             }
 
             // Save Data
             function saveData() {
-                const data = { count, limit, streak, lastJapDate, history };
+                const data = { count, limit, streak, lastJapDate, history, musicOn };
                 localStorage.setItem(`japData_${currentUser}`, JSON.stringify(data));
             }
 
